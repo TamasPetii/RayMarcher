@@ -172,6 +172,7 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Components\Component.cpp" />
+    <ClCompile Include="Source\Render\Canvas.cpp" />
     <ClCompile Include="Source\Render\Entity\Entity.cpp" />
     <ClCompile Include="Source\Engine\Abstractions\FrameBuffer.cpp" />
     <ClCompile Include="Source\Engine\Abstractions\Camera.cpp" />
@@ -186,6 +187,8 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
     <ClCompile Include="Source\Engine\Abstractions\Vertex.cpp" />
     <ClCompile Include="Source\Engine\Abstractions\Texture.cpp" />
     <ClCompile Include="Source\Engine\Components\Transform\TransformComponent.cpp" />
+    <ClCompile Include="Source\Render\Sphere.cpp" />
+    <ClCompile Include="Source\Render\Torus.cpp" />
     <ClCompile Include="Vendor\IMGUI\IMGUI\GraphEditor.cpp" />
     <ClCompile Include="Vendor\IMGUI\IMGUI\ImCurveEdit.cpp" />
     <ClCompile Include="Vendor\IMGUI\IMGUI\ImGradient.cpp" />
@@ -203,6 +206,7 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Abstractions\Abstractions.h" />
     <ClInclude Include="Source\Engine\Components\Component.h" />
+    <ClInclude Include="Source\Render\Canvas.h" />
     <ClInclude Include="Source\Render\Entity\Entity.h" />
     <ClInclude Include="Source\Engine\Abstractions\Camera.h" />
     <ClInclude Include="Source\Engine\Engine.h" />
@@ -217,6 +221,8 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
     <ClInclude Include="Source\Engine\Abstractions\Vertex.h" />
     <ClInclude Include="Source\Engine\Abstractions\Texture.h" />
     <ClInclude Include="Source\Engine\Components\Transform\TransformComponent.h" />
+    <ClInclude Include="Source\Render\Sphere.h" />
+    <ClInclude Include="Source\Render\Torus.h" />
     <ClInclude Include="Vendor\IMGUI\IMGUI\GraphEditor.h" />
     <ClInclude Include="Vendor\IMGUI\IMGUI\imconfig.h" />
     <ClInclude Include="Vendor\IMGUI\IMGUI\ImCurveEdit.h" />

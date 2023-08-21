@@ -22,11 +22,9 @@ Renderer::Renderer()
 		}
 	);
 
-	mSpheres.push_back(Sphere(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), 1));
-	mSpheres.push_back(Sphere(glm::vec3(0, 1, 0), glm::vec3(3, 2.5, -5), 2.5));
-	mSpheres.push_back(Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 5, 3), 5));
-	mSpheres.push_back(Sphere(glm::vec3(1, 1, 0), glm::vec3(0, -1000, 0), 1000));
-
+	mSpheres.push_back(Sphere(glm::vec3(1, 0, 0), glm::vec3(0, 2, 0), 1));
+	mSpheres.push_back(Sphere(glm::vec3(0, 1, 0), glm::vec3(3, 3.5, -5), 2.5));
+	mSpheres.push_back(Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 6, 3), 5));
 	mToruses.push_back(Torus(glm::vec3(1, 0, 1), glm::vec3(0, 10, 0), 1, 0.2));
 }
 
@@ -49,10 +47,10 @@ void Renderer::Render()
 
 void Renderer::Update()
 {
-	static int nbFrames = 0;
 	static double lastTime = glfwGetTime();
-
 	double currentTime = glfwGetTime();
+
+	mLightPos = glm::vec3(5 * cos(lastTime / 10 * 2 * 3.1415), 20, 5 * sin(lastTime / 10 * 2 * 3.1415));
 
 	lastTime = currentTime;
 }
@@ -89,6 +87,7 @@ void Renderer::RenderScene(IFrameBufferObject* frameBuffer, Program* shaderProgr
 	}
 	mSceneProgram->SetUniform("uTorusNumber", (int)mToruses.size());
 
+	mSceneProgram->SetUniform("uLightPos", mLightPos);
 	mSceneProgram->SetUniform("uViewProjMatrix", mCamera->GetViewProjMatrix());
 	mCanvas->Draw();
 

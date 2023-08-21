@@ -28,4 +28,5 @@ private:
 
 	std::vector<Sphere> mSpheres;
 	std::vector<Torus> mToruses;
+	glm::vec3 mLightPos;
 };

@@ -1,8 +1,15 @@
 #version 460 core
-#define MAX_ITERATION 50
-#define MAX_DISTANCE 100000
+#define MAX_ITERATION 100	
+#define MAX_DISTANCE 100
 #define ACCEPT_DISTANCE 0.01
 #define MAX_SHAPE_NUMBER 100
+
+struct Result
+{
+	int success;
+	vec3 color;
+	vec3 origin;
+};
 
 struct Hit
 {
@@ -38,13 +45,21 @@ in vec3 frag_position;
 out vec4 out_color;
 
 //Uniform Data
+uniform vec3 uLightPos;
 uniform mat4 uViewProjMatrix;
-
 uniform int uSphereNumber;
 uniform Sphere uSpheres[MAX_SHAPE_NUMBER];
-
 uniform int uTorusNumber;
 uniform Torus uToruses[MAX_SHAPE_NUMBER];
+
+//Function Declaration
+Ray GenerateRay();
+float SphereDistance(vec3 rayOrigin, Sphere sphere);
+float TorusDistance(vec3 rayOrigin, Torus torus);
+Hit ClosestDistance(vec3 rayOrigin);
+vec3 GenerateNormal(Ray ray);
+float CalculateLight(Ray ray);
+Result RayMarch(Ray ray);
 
 Ray GenerateRay()
 {
@@ -77,6 +92,16 @@ float TorusDistance(vec3 rayOrigin, Torus torus)
 	return dist;
 }
 
+float CubeDistance(vec3 rayOrigin)
+{
+	vec3 cubePosition = vec3(0, 3, -10);
+	vec3 cubeParameters = vec3(1, 1, 1);
+	vec3 p = abs(rayOrigin - cubePosition) - cubeParameters;
+	vec3 a = vec3(max(0, p.x), max(0, p.y), max(0, p.z));
+	float dist = length(a);
+	return dist;
+}
+
 Hit ClosestDistance(vec3 rayOrigin)
 {
 	Hit closestHit;
@@ -105,29 +130,50 @@ Hit ClosestDistance(vec3 rayOrigin)
 		}
 	}
 
+	if(CubeDistance(rayOrigin) < closestHit.dist)
+	{
+		closestHit.dist = CubeDistance(rayOrigin);
+		closestHit.color = vec3(0.5, 1, 0.5);
+	}
+
+	if(rayOrigin.y < closestHit.dist)
+	{
+		closestHit.dist = rayOrigin.y;
+		closestHit.color = vec3(1);
+	}
+
 	return closestHit;
 }
 
-vec3 GenerateNormal(Ray ray)
+vec3 GenerateNormal(vec3 rayOrigin)
 {
-	float closestDistance = ClosestDistance(ray.origin).dist;
-	float changeX = ClosestDistance(ray.origin + vec3(0.01, 0, 0)).dist - closestDistance;
-	float changeY = ClosestDistance(ray.origin + vec3(0, 0.01, 0)).dist - closestDistance;
-	float changeZ = ClosestDistance(ray.origin + vec3(0, 0, 0.01)).dist - closestDistance;
+	float closestDistance = ClosestDistance(rayOrigin).dist;
+	float changeX = ClosestDistance(rayOrigin + vec3(0.01, 0, 0)).dist - closestDistance;
+	float changeY = ClosestDistance(rayOrigin + vec3(0, 0.01, 0)).dist - closestDistance;
+	float changeZ = ClosestDistance(rayOrigin + vec3(0, 0, 0.01)).dist - closestDistance;
 	return normalize(vec3(changeX, changeY, changeZ));
 }
 
-float CalculateLight(Ray ray)
+float CalculateLight(vec3 rayOrigin)
 {
-	vec3 normal = GenerateNormal(ray);
-	vec3 direction = normalize(vec3(-1, -1, -1));
+	vec3 normal = GenerateNormal(rayOrigin);
+	vec3 toLight = uLightPos - rayOrigin;
 	
-	float diffuseIntensity = clamp(dot(normal, -direction), 0, 1);
-	return diffuseIntensity;
+	float diffuseIntensity = clamp(dot(normal, normalize(toLight)), 0, 1);
+
+	Ray newRay;
+	newRay.origin = rayOrigin + normal * 0.025;
+	newRay.direction = normalize(toLight);
+	float shadow = RayMarch(newRay).success == 1 ? 0 : 1;
+
+	return diffuseIntensity * shadow;
 }
 
-vec3 RayMarch(Ray ray)
+Result RayMarch(Ray ray)
 {
+	Result result;
+	result.success = 0;
+
 	for(int i = 0; i < MAX_ITERATION; ++i)
 	{
 		Hit closestHit = ClosestDistance(ray.origin);
@@ -135,16 +181,31 @@ vec3 RayMarch(Ray ray)
 
 		if(closestHit.dist < ACCEPT_DISTANCE)
 		{
-			return closestHit.color * CalculateLight(ray);
+			result.origin = ray.origin;
+			result.color = closestHit.color;
+			result.success = 1;
+			break;
 		}
+
+		if(closestHit.dist > MAX_DISTANCE)
+			break;
 	}
 
-	return vec3(0);
+	return result;
 }
+
 
 void main()
 {
 	Ray ray = GenerateRay();
-	vec3 color = RayMarch(ray);
-	out_color = vec4(color,1);
+	Result result = RayMarch(ray);
+
+	if(result.success == 1)
+	{
+		out_color = vec4(result.color * CalculateLight(result.origin), 1);
+	}
+	else
+	{
+		out_color = vec4(1);
+	}
 }

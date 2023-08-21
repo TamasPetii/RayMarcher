@@ -171,6 +171,7 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Render\Cube.cpp" />
     <ClCompile Include="Source\Engine\Components\Component.cpp" />
     <ClCompile Include="Source\Render\Canvas.cpp" />
     <ClCompile Include="Source\Render\Entity\Entity.cpp" />
@@ -204,6 +205,7 @@ copy /Y "$(ProjectDir)Vendor\GLFW\bin\*.dll" "$(TargetDir)";</Command>
     <ClCompile Include="Vendor\STB_IMAGE\STB_IMAGE\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Render\Cube.h" />
     <ClInclude Include="Source\Engine\Abstractions\Abstractions.h" />
     <ClInclude Include="Source\Engine\Components\Component.h" />
     <ClInclude Include="Source\Render\Canvas.h" />

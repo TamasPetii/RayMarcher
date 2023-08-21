@@ -1,9 +1,9 @@
 #pragma once
 #include "../Engine/Engine.h"
 #include "Entity/Entity.h"
-#include <unordered_set>
-#include <set>
-#include <map>
+#include "Canvas.h"
+#include "Sphere.h"
+#include "Torus.h"
 
 class Renderer
 {
@@ -21,7 +21,11 @@ private:
 	void PostRender();
 	void RenderScene(IFrameBufferObject* frameBuffer, Program* shaderProgram);
 
+	Canvas* mCanvas;
 	Camera* mCamera;
 	Program* mSceneProgram;
 	IFrameBufferObject* mSceneFrameBuffer;
+
+	std::vector<Sphere> mSpheres;
+	std::vector<Torus> mToruses;
 };

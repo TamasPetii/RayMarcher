@@ -5,6 +5,8 @@
 #include <memory>
 #include "../Interface/Interface.h"
 #include "../Render/Renderer.h"
+#include <time.h>
+#include <cstdlib>
 
 class App
 {

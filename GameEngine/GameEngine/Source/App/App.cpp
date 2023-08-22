@@ -2,6 +2,8 @@
 
 App::App()
 {
+	srand(time(NULL));
+
 	mInterface = nullptr;
 	mRenderer = nullptr;
 	mWindow = nullptr;

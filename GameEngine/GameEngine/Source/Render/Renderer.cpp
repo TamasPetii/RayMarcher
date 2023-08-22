@@ -19,16 +19,37 @@ Renderer::Renderer()
 			Shader(GL_FRAGMENT_SHADER, "Source/Shader/RayMarch.frag")
 		},
 		{
-			ShaderLayout(0, "vert_position"),
+			ShaderLayout(0, "vert_position")
 		}
 	);
 
-	mShapes.push_back(new Sphere(glm::vec3(1, 0, 0), glm::vec3(0, 2, 0), 1));
-	mShapes.push_back(new Sphere(glm::vec3(0, 1, 0), glm::vec3(3, 3.5, -5), 2.5));
-	mShapes.push_back(new Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 6, 3), 5));
-	mShapes.push_back(new Torus(glm::vec3(1, 0, 1), glm::vec3(0, 10, 0), 1, 0.2));
-	mShapes.push_back(new Cube(glm::vec3(0.1, 0.4, 0.5), glm::vec3(0, 5, 10), glm::vec3(5,5,1)));
-	mShapes.push_back(new Capsule(glm::vec3(0.4, 0.2, 0.5), glm::vec3(0, 5, -10), glm::vec3(0, 10, -10), 1));
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			Sphere* sphere = Sphere::RandomSphere();
+			sphere->GetOrigin().x = i * 4 - 6;
+			sphere->GetOrigin().z = j * 4 - 6;
+			mShapes.push_back(sphere);
+
+			Cube* cube = Cube::RandomCube();
+			cube->GetOrigin().x = 15 + i * 4 - 6;
+			cube->GetOrigin().z = j * 4 - 6;
+			mShapes.push_back(cube);
+
+			Torus* torus = Torus::RandomTorus();
+			torus->GetOrigin().x = i * 4 - 6;
+			torus->GetOrigin().z = 15 + j * 4 - 6;
+			mShapes.push_back(torus);
+
+			Capsule* capsule = Capsule::RandomCapsule();
+			capsule->GetOrigin1().x = 15 + i * 4 - 6;
+			capsule->GetOrigin1().z = 15 + j * 4 - 6;
+			capsule->GetOrigin2().x = 15 + i * 4 - 6;
+			capsule->GetOrigin2().z = 15 + j * 4 - 6;
+			mShapes.push_back(capsule);
+		}
+	}
 }
 
 Renderer::~Renderer()

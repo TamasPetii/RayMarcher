@@ -19,6 +19,7 @@ public:
 	inline IFrameBufferObject* GetSceneFrameBuffer() const { return mSceneFrameBuffer; }
 	inline IFrameBufferObject* GetAntiAliasingFrameBuffer() const { return mAntiAliasingFrameBuffer; }
 	inline Camera* GetCamera() const { return mCamera; }
+	inline std::vector<Shape*>& GetShapes() { return mShapes; }
 private:
 	void PreRender();
 	void PostRender();

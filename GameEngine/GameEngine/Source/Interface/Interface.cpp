@@ -315,6 +315,13 @@ void Interface::RenderComponentsWindow()
 {
     ImGui::Begin("Components");
 
+    Sphere* sphere = dynamic_cast<Sphere*>(mRenderer->GetShapes()[0]);
+
+    ImGui::ColorEdit3(" : Color", &sphere->GetColor().x);
+    ImGui::DragFloat3(" : Origin", &sphere->GetOrigin().x, 0.05f);
+    ImGui::DragFloat(" : Radius", &sphere->GetRadius(), 0.05f);
+    ImGui::Checkbox(" : Subtract", &sphere->GetSubtract());
+
     /*
     auto entity = mRenderer->GetActiveEntity();
     if (entity != nullptr)

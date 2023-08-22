@@ -28,6 +28,7 @@ Renderer::Renderer()
 	mShapes.push_back(new Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 6, 3), 5));
 	mShapes.push_back(new Torus(glm::vec3(1, 0, 1), glm::vec3(0, 10, 0), 1, 0.2));
 	mShapes.push_back(new Cube(glm::vec3(0.1, 0.4, 0.5), glm::vec3(0, 5, 10), glm::vec3(5,5,1)));
+	mShapes.push_back(new Capsule(glm::vec3(0.4, 0.2, 0.5), glm::vec3(0, 5, -10), glm::vec3(0, 10, -10), 1));
 }
 
 Renderer::~Renderer()
@@ -77,7 +78,7 @@ void Renderer::PostRender()
 	Cube::Index = 0;
 	Sphere::Index = 0;
 	Torus::Index = 0;
-
+	Capsule::Index = 0;
 
 	/*
 	unsigned int width = mAntiAliasingFrameBuffer->GetWidth();

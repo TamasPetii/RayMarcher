@@ -1,8 +1,8 @@
 #version 460 core
 #define MAX_ITERATION 250	
 #define MAX_DISTANCE 100
-#define ACCEPT_DISTANCE 0.001
-#define MAX_SHAPE_NUMBER 100
+#define ACCEPT_DISTANCE 0.01
+#define MAX_SHAPE_NUMBER 15
 
 struct Result
 {
@@ -15,6 +15,12 @@ struct Hit
 {
 	float dist;
 	vec3 color;
+};
+
+struct Ray
+{
+	vec3 origin;
+	vec3 direction;
 };
 
 struct Torus
@@ -39,10 +45,12 @@ struct Cube
 	vec3 parameters;
 };
 
-struct Ray
+struct Capsule
 {
-	vec3 origin;
-	vec3 direction;
+	vec3 color;
+	vec3 origin1;
+	vec3 origin2;
+	float radius;
 };
 
 //Input Data
@@ -60,6 +68,8 @@ uniform int uTorusNumber;
 uniform Torus uToruses[MAX_SHAPE_NUMBER];
 uniform int uCubeNumber;
 uniform Cube uCubes[MAX_SHAPE_NUMBER];
+uniform int uCapsuleNumber;
+uniform Capsule uCapsules[MAX_SHAPE_NUMBER];
 
 
 //Function Declaration
@@ -67,6 +77,7 @@ Ray GenerateRay();
 float SphereDistance(vec3 rayOrigin, Sphere sphere);
 float TorusDistance(vec3 rayOrigin, Torus torus);
 float CubeDistance(vec3 rayOrigin, Cube cube);
+float CapsuleDistance(vec3 rayOrigin, Capsule capsule);
 Hit ClosestDistance(vec3 rayOrigin);
 vec3 GenerateNormal(Ray ray);
 float CalculateLight(Ray ray);
@@ -111,12 +122,21 @@ float CubeDistance(vec3 rayOrigin, Cube cube)
 	return dist;
 }
 
+float CapsuleDistance(vec3 rayOrigin, Capsule capsule)
+{
+	vec3 pa = rayOrigin - capsule.origin1;
+	vec3 ba = capsule.origin2 - capsule.origin1;
+	float t = clamp(dot(pa, ba) / dot(ba, ba), 0, 1);
+	vec3 c = capsule.origin1 + t * ba;
+	return length(rayOrigin - c) - capsule.radius;
+}
+
 Hit ClosestDistance(vec3 rayOrigin)
 {
 	Hit closestHit;
 	closestHit.dist = MAX_DISTANCE;
 	closestHit.color = vec3(0);
-	
+
 	for(int i = 0; i < uSphereNumber; ++i)
 	{
 		float dist = SphereDistance(rayOrigin, uSpheres[i]);
@@ -150,7 +170,18 @@ Hit ClosestDistance(vec3 rayOrigin)
 			closestHit.color = uCubes[i].color;
 		}
 	}
+	
+	for(int i = 0; i < uCapsuleNumber; ++i)
+	{
+		float dist = CapsuleDistance(rayOrigin, uCapsules[i]);
 
+		if(dist < closestHit.dist)
+		{
+			closestHit.dist = dist;
+			closestHit.color = uCapsules[i].color;
+		}
+	}
+	
 	if(rayOrigin.y < closestHit.dist)
 	{
 		closestHit.dist = rayOrigin.y;

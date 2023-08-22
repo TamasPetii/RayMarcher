@@ -5,6 +5,7 @@
 #include "Shape/Sphere.h"
 #include "Shape/Torus.h"
 #include "Shape/Cube.h"
+#include "Shape/Capsule.h"
 
 class Renderer
 {

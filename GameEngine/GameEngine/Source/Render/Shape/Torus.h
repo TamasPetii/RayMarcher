@@ -8,6 +8,7 @@ public:
 	
 	void AttachToShader(Program* program) override;
 	static int Index;
+	static Torus* RandomTorus();
 	
 	inline glm::vec3& GetOrigin() { return origin; }
 	inline float& GetRadiusPrimary() { return radiusPrimary; }

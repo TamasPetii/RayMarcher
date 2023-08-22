@@ -9,6 +9,7 @@ public:
 
 	void AttachToShader(Program* program) override;
 	static int Index;
+	static Capsule* RandomCapsule();
 
 	inline glm::vec3& GetOrigin1() { return origin1; }
 	inline glm::vec3& GetOrigin2() { return origin2; }

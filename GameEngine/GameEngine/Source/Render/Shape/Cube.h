@@ -9,6 +9,7 @@ public:
 	
 	void AttachToShader(Program* program) override;
 	static int Index;
+	static Cube* RandomCube();
 
 	inline glm::vec3& GetOrigin() { return origin; }
 	inline glm::vec3& GetParameters() { return parameters; }

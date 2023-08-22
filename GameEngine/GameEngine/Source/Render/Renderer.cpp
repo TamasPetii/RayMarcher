@@ -11,6 +11,7 @@ Renderer::Renderer()
 
 	mCanvas = new Canvas();
 	mCamera = new Camera(1200, 800);
+	mAntiAliasingFrameBuffer = new FrameBufferObject<FBO_AntiAliasingColorTexture>();
 	mSceneFrameBuffer = new FrameBufferObject<FBO_ColorTexture>();
 	mSceneProgram = new Program(
 		{
@@ -22,14 +23,20 @@ Renderer::Renderer()
 		}
 	);
 
-	mSpheres.push_back(Sphere(glm::vec3(1, 0, 0), glm::vec3(0, 2, 0), 1));
-	mSpheres.push_back(Sphere(glm::vec3(0, 1, 0), glm::vec3(3, 3.5, -5), 2.5));
-	mSpheres.push_back(Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 6, 3), 5));
-	mToruses.push_back(Torus(glm::vec3(1, 0, 1), glm::vec3(0, 10, 0), 1, 0.2));
+	mShapes.push_back(new Sphere(glm::vec3(1, 0, 0), glm::vec3(0, 2, 0), 1));
+	mShapes.push_back(new Sphere(glm::vec3(0, 1, 0), glm::vec3(3, 3.5, -5), 2.5));
+	mShapes.push_back(new Sphere(glm::vec3(0, 0, 1), glm::vec3(-10, 6, 3), 5));
+	mShapes.push_back(new Torus(glm::vec3(1, 0, 1), glm::vec3(0, 10, 0), 1, 0.2));
+	mShapes.push_back(new Cube(glm::vec3(0.1, 0.4, 0.5), glm::vec3(0, 5, 10), glm::vec3(5,5,1)));
 }
 
 Renderer::~Renderer()
 {
+	for (auto shape : mShapes)
+	{
+		delete shape;
+	}
+
 	delete mCanvas;
 	delete mCamera;
 	delete mSceneFrameBuffer;
@@ -58,39 +65,40 @@ void Renderer::Update()
 void Renderer::PreRender()
 {
 	mSceneFrameBuffer->ClearBuffers();
+
+	for (auto shape : mShapes)
+	{
+		shape->AttachToShader(mSceneProgram);
+	}
 }
 
 void Renderer::PostRender()
 {
+	Cube::Index = 0;
+	Sphere::Index = 0;
+	Torus::Index = 0;
 
+
+	/*
+	unsigned int width = mAntiAliasingFrameBuffer->GetWidth();
+	unsigned int height = mAntiAliasingFrameBuffer->GetHeight();
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, mAntiAliasingFrameBuffer->GetFrameBufferId());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mSceneFrameBuffer->GetFrameBufferId());
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	*/
 }
 
 void Renderer::RenderScene(IFrameBufferObject* frameBuffer, Program* shaderProgram)
 {
-	mSceneFrameBuffer->Bind();
-	mSceneProgram->Bind();
+	frameBuffer->Bind();
+	shaderProgram->Bind();
+	shaderProgram->SetUniform("uLightPos", mLightPos);
+	shaderProgram->SetUniform("uViewProjMatrix", mCamera->GetViewProjMatrix());
 
-	for (int i = 0; i < mSpheres.size(); ++i)
-	{
-		mSceneProgram->SetUniform("uSpheres[" + std::to_string(i) + "].color", mSpheres[i].GetColor());
-		mSceneProgram->SetUniform("uSpheres[" + std::to_string(i) + "].origin", mSpheres[i].GetOrigin());
-		mSceneProgram->SetUniform("uSpheres[" + std::to_string(i) + "].radius", mSpheres[i].GetRadius());
-	}
-	mSceneProgram->SetUniform("uSphereNumber", (int)mSpheres.size());
-
-	for (int i = 0; i < mToruses.size(); ++i)
-	{
-		mSceneProgram->SetUniform("uToruses[" + std::to_string(i) + "].color", mToruses[i].GetColor());
-		mSceneProgram->SetUniform("uToruses[" + std::to_string(i) + "].origin", mToruses[i].GetOrigin());
-		mSceneProgram->SetUniform("uToruses[" + std::to_string(i) + "].radiusPrimary", mToruses[i].GetRadiusPrimary());
-		mSceneProgram->SetUniform("uToruses[" + std::to_string(i) + "].radiusSecondary", mToruses[i].GetRadiusSecondary());
-	}
-	mSceneProgram->SetUniform("uTorusNumber", (int)mToruses.size());
-
-	mSceneProgram->SetUniform("uLightPos", mLightPos);
-	mSceneProgram->SetUniform("uViewProjMatrix", mCamera->GetViewProjMatrix());
 	mCanvas->Draw();
 
-	mSceneProgram->UnBind();
-	mSceneFrameBuffer->UnBind();
+	shaderProgram->UnBind();
+	frameBuffer->UnBind();
 }

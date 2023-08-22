@@ -102,13 +102,16 @@
     <ClCompile Include="Source\Render\Canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Render\Sphere.cpp">
+    <ClCompile Include="Source\Render\Shape\Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Render\Torus.cpp">
+    <ClCompile Include="Source\Render\Shape\Torus.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Render\Cube.cpp">
+    <ClCompile Include="Source\Render\Shape\Cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Render\Shape\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -212,13 +215,16 @@
     <ClInclude Include="Source\Render\Canvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Render\Sphere.h">
+    <ClInclude Include="Source\Render\Shape\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Render\Torus.h">
+    <ClInclude Include="Source\Render\Shape\Torus.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Render\Cube.h">
+    <ClInclude Include="Source\Render\Shape\Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Render\Shape\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

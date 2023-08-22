@@ -1,7 +1,7 @@
 #version 460 core
-#define MAX_ITERATION 100	
+#define MAX_ITERATION 250	
 #define MAX_DISTANCE 100
-#define ACCEPT_DISTANCE 0.01
+#define ACCEPT_DISTANCE 0.001
 #define MAX_SHAPE_NUMBER 100
 
 struct Result
@@ -32,6 +32,13 @@ struct Sphere
 	float radius;
 };
 
+struct Cube
+{
+	vec3 color;
+	vec3 origin;
+	vec3 parameters;
+};
+
 struct Ray
 {
 	vec3 origin;
@@ -51,11 +58,15 @@ uniform int uSphereNumber;
 uniform Sphere uSpheres[MAX_SHAPE_NUMBER];
 uniform int uTorusNumber;
 uniform Torus uToruses[MAX_SHAPE_NUMBER];
+uniform int uCubeNumber;
+uniform Cube uCubes[MAX_SHAPE_NUMBER];
+
 
 //Function Declaration
 Ray GenerateRay();
 float SphereDistance(vec3 rayOrigin, Sphere sphere);
 float TorusDistance(vec3 rayOrigin, Torus torus);
+float CubeDistance(vec3 rayOrigin, Cube cube);
 Hit ClosestDistance(vec3 rayOrigin);
 vec3 GenerateNormal(Ray ray);
 float CalculateLight(Ray ray);
@@ -92,11 +103,9 @@ float TorusDistance(vec3 rayOrigin, Torus torus)
 	return dist;
 }
 
-float CubeDistance(vec3 rayOrigin)
-{
-	vec3 cubePosition = vec3(0, 3, -10);
-	vec3 cubeParameters = vec3(1, 1, 1);
-	vec3 p = abs(rayOrigin - cubePosition) - cubeParameters;
+float CubeDistance(vec3 rayOrigin, Cube cube)
+{ 
+	vec3 p = abs(rayOrigin - cube.origin) - cube.parameters;
 	vec3 a = vec3(max(0, p.x), max(0, p.y), max(0, p.z));
 	float dist = length(a);
 	return dist;
@@ -107,7 +116,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 	Hit closestHit;
 	closestHit.dist = MAX_DISTANCE;
 	closestHit.color = vec3(0);
-
+	
 	for(int i = 0; i < uSphereNumber; ++i)
 	{
 		float dist = SphereDistance(rayOrigin, uSpheres[i]);
@@ -129,11 +138,17 @@ Hit ClosestDistance(vec3 rayOrigin)
 			closestHit.color = uToruses[i].color;
 		}
 	}
+	
 
-	if(CubeDistance(rayOrigin) < closestHit.dist)
+	for(int i = 0; i < uCubeNumber; ++i)
 	{
-		closestHit.dist = CubeDistance(rayOrigin);
-		closestHit.color = vec3(0.5, 1, 0.5);
+		float dist = CubeDistance(rayOrigin, uCubes[i]);
+
+		if(dist < closestHit.dist)
+		{
+			closestHit.dist = dist;
+			closestHit.color = uCubes[i].color;
+		}
 	}
 
 	if(rayOrigin.y < closestHit.dist)
@@ -148,9 +163,9 @@ Hit ClosestDistance(vec3 rayOrigin)
 vec3 GenerateNormal(vec3 rayOrigin)
 {
 	float closestDistance = ClosestDistance(rayOrigin).dist;
-	float changeX = ClosestDistance(rayOrigin + vec3(0.01, 0, 0)).dist - closestDistance;
-	float changeY = ClosestDistance(rayOrigin + vec3(0, 0.01, 0)).dist - closestDistance;
-	float changeZ = ClosestDistance(rayOrigin + vec3(0, 0, 0.01)).dist - closestDistance;
+	float changeX = ClosestDistance(rayOrigin + vec3(0.001, 0, 0)).dist - closestDistance;
+	float changeY = ClosestDistance(rayOrigin + vec3(0, 0.001, 0)).dist - closestDistance;
+	float changeZ = ClosestDistance(rayOrigin + vec3(0, 0, 0.001)).dist - closestDistance;
 	return normalize(vec3(changeX, changeY, changeZ));
 }
 
@@ -173,11 +188,13 @@ Result RayMarch(Ray ray)
 {
 	Result result;
 	result.success = 0;
+	float dist = 0;
 
 	for(int i = 0; i < MAX_ITERATION; ++i)
 	{
 		Hit closestHit = ClosestDistance(ray.origin);
 		ray.origin += ray.direction * closestHit.dist;
+		dist += closestHit.dist;
 
 		if(closestHit.dist < ACCEPT_DISTANCE)
 		{
@@ -187,7 +204,7 @@ Result RayMarch(Ray ray)
 			break;
 		}
 
-		if(closestHit.dist > MAX_DISTANCE)
+		if(dist > MAX_DISTANCE)
 			break;
 	}
 

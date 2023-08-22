@@ -2,8 +2,9 @@
 #include "../Engine/Engine.h"
 #include "Entity/Entity.h"
 #include "Canvas.h"
-#include "Sphere.h"
-#include "Torus.h"
+#include "Shape/Sphere.h"
+#include "Shape/Torus.h"
+#include "Shape/Cube.h"
 
 class Renderer
 {
@@ -15,6 +16,7 @@ public:
 	void Update();
 
 	inline IFrameBufferObject* GetSceneFrameBuffer() const { return mSceneFrameBuffer; }
+	inline IFrameBufferObject* GetAntiAliasingFrameBuffer() const { return mAntiAliasingFrameBuffer; }
 	inline Camera* GetCamera() const { return mCamera; }
 private:
 	void PreRender();
@@ -24,9 +26,9 @@ private:
 	Canvas* mCanvas;
 	Camera* mCamera;
 	Program* mSceneProgram;
+	IFrameBufferObject* mAntiAliasingFrameBuffer;
 	IFrameBufferObject* mSceneFrameBuffer;
 
-	std::vector<Sphere> mSpheres;
-	std::vector<Torus> mToruses;
+	std::vector<Shape*> mShapes;
 	glm::vec3 mLightPos;
 };

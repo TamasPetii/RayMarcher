@@ -156,3 +156,43 @@ void FrameBufferObject<FBO_DepthTexture>::ClearBuffers()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	UnBind();
 }
+
+////////////////////////////////
+//////////AntiAliasing//////////
+////////////////////////////////
+
+void FrameBufferObject<FBO_AntiAliasingColorTexture>::CreateBuffers()
+{
+	//Create FrameBuffer
+	glGenFramebuffers(1, &mFrameBufferId);
+	glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferId);
+
+	//Create and specify Texture
+	glGenTextures(1, &mTextureId);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTextureId);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, mWidth, mHeight, GL_TRUE);
+
+	//Attach Texture to FrameBuffer
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mTextureId, 0);;
+
+	//Check Errors
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		throw std::runtime_error("Error occurred while creating frame buffer!");
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBufferObject<FBO_AntiAliasingColorTexture>::DeleteBuffers()
+{
+	glDeleteFramebuffers(1, &mFrameBufferId);
+	glDeleteTextures(1, &mTextureId);
+}
+
+void FrameBufferObject<FBO_AntiAliasingColorTexture>::ClearBuffers()
+{
+	Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	UnBind();
+}

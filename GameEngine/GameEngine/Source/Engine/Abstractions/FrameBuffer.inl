@@ -38,6 +38,26 @@ unsigned int FrameBufferObjectBase<T>::GetTextureId()
 }
 
 template<typename T>
+unsigned int FrameBufferObjectBase<T>::GetFrameBufferId()
+{
+	return this->mFrameBufferId;
+}
+
+template<typename T>
+unsigned int FrameBufferObjectBase<T>::GetWidth()
+{
+	return this->mWidth;
+}
+
+
+template<typename T>
+unsigned int FrameBufferObjectBase<T>::GetHeight()
+{
+	return this->mHeight;
+}
+
+
+template<typename T>
 void FrameBufferObjectBase<T>::ResizeBuffers(unsigned int width, unsigned int height)
 {
 	this->mWidth = width;

@@ -6,6 +6,7 @@
 class FBO_ColorTexture {};
 class FBO_IntegerTexture {};
 class FBO_DepthTexture {};
+class FBO_AntiAliasingColorTexture {};
 
 class IFrameBufferObject 
 {
@@ -17,6 +18,9 @@ public:
 	virtual void DeleteBuffers() = 0;
 	virtual void ClearBuffers() = 0;
 	virtual unsigned int GetTextureId() = 0;
+	virtual unsigned int GetFrameBufferId() = 0;
+	virtual unsigned int GetWidth() = 0;
+	virtual unsigned int GetHeight() = 0;
 };
 
 template <typename T>
@@ -29,6 +33,9 @@ public:
 	void UnBind() override;
 	void ResizeBuffers(unsigned int width, unsigned int height) override;
 	unsigned int GetTextureId() override;
+	unsigned int GetFrameBufferId() override;
+	unsigned int GetWidth() override;
+	unsigned int GetHeight() override;
 protected:
 	unsigned int mFrameBufferId;
 	unsigned int mTextureId;
@@ -78,6 +85,22 @@ class FrameBufferObject<FBO_DepthTexture> : public FrameBufferObjectBase<FBO_Dep
 public:
 	FrameBufferObject() : FrameBufferObjectBase() 
 	{ 
+		this->CreateBuffers();
+	}
+	~FrameBufferObject() { this->DeleteBuffers(); }
+	void CreateBuffers() override;
+	void DeleteBuffers() override;
+	void ClearBuffers() override;
+private:
+	unsigned int mDepthBufferId;
+};
+
+template<>
+class FrameBufferObject<FBO_AntiAliasingColorTexture> : public FrameBufferObjectBase<FBO_AntiAliasingColorTexture>
+{
+public:
+	FrameBufferObject() : FrameBufferObjectBase()
+	{
 		this->CreateBuffers();
 	}
 	~FrameBufferObject() { this->DeleteBuffers(); }

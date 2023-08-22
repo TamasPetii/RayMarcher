@@ -2,7 +2,7 @@
 #define MAX_ITERATION 250	
 #define MAX_DISTANCE 100
 #define ACCEPT_DISTANCE 0.01
-#define MAX_SHAPE_NUMBER 15
+#define MAX_SHAPE_NUMBER 10
 
 struct Result
 {
@@ -33,6 +33,7 @@ struct Torus
 
 struct Sphere
 {
+	int subtract;
 	vec3 color;
 	vec3 origin;
 	float radius;
@@ -82,6 +83,11 @@ Hit ClosestDistance(vec3 rayOrigin);
 vec3 GenerateNormal(Ray ray);
 float CalculateLight(Ray ray);
 Result RayMarch(Ray ray);
+
+float smoothUnion(float d1, float d2, float k) {
+    float h = clamp(0.5 + 0.5*(d2-d1)/k, 0.0, 1.0);
+    return mix(d2, d1, h) - k*h*(1.0-h);
+}
 
 Ray GenerateRay()
 {
@@ -140,7 +146,6 @@ Hit ClosestDistance(vec3 rayOrigin)
 	for(int i = 0; i < uSphereNumber; ++i)
 	{
 		float dist = SphereDistance(rayOrigin, uSpheres[i]);
-
 		if(dist < closestHit.dist)
 		{
 			closestHit.dist = dist;

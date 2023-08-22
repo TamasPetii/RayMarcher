@@ -6,6 +6,7 @@
 
 struct Result
 {
+	int material;
 	int success;
 	vec3 color;
 	vec3 origin;
@@ -13,6 +14,7 @@ struct Result
 
 struct Hit
 {
+	int material;
 	float dist;
 	vec3 color;
 };
@@ -25,6 +27,7 @@ struct Ray
 
 struct Torus
 {
+	int material;
     vec3 color;
 	vec3 origin;
 	float radiusPrimary;
@@ -33,6 +36,7 @@ struct Torus
 
 struct Sphere
 {
+	int material;
 	int subtract;
 	vec3 color;
 	vec3 origin;
@@ -41,6 +45,7 @@ struct Sphere
 
 struct Cube
 {
+	int material;
 	vec3 color;
 	vec3 origin;
 	vec3 parameters;
@@ -48,6 +53,7 @@ struct Cube
 
 struct Capsule
 {
+	int material;
 	vec3 color;
 	vec3 origin1;
 	vec3 origin2;
@@ -71,7 +77,6 @@ uniform int uCubeNumber;
 uniform Cube uCubes[MAX_SHAPE_NUMBER];
 uniform int uCapsuleNumber;
 uniform Capsule uCapsules[MAX_SHAPE_NUMBER];
-
 
 //Function Declaration
 Ray GenerateRay();
@@ -150,6 +155,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 		{
 			closestHit.dist = dist;
 			closestHit.color = uSpheres[i].color;
+			closestHit.material = uSpheres[i].material;
 		}
 	}
 
@@ -161,6 +167,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 		{
 			closestHit.dist = dist;
 			closestHit.color = uToruses[i].color;
+			closestHit.material = uToruses[i].material;
 		}
 	}
 	
@@ -173,6 +180,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 		{
 			closestHit.dist = dist;
 			closestHit.color = uCubes[i].color;
+			closestHit.material = uCubes[i].material;
 		}
 	}
 	
@@ -184,6 +192,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 		{
 			closestHit.dist = dist;
 			closestHit.color = uCapsules[i].color;
+			closestHit.material = uCapsules[i].material;
 		}
 	}
 	
@@ -191,6 +200,7 @@ Hit ClosestDistance(vec3 rayOrigin)
 	{
 		closestHit.dist = rayOrigin.y;
 		closestHit.color = vec3(1);
+		closestHit.material = 0;
 	}
 
 	return closestHit;
@@ -236,6 +246,7 @@ Result RayMarch(Ray ray)
 		{
 			result.origin = ray.origin;
 			result.color = closestHit.color;
+			result.material = closestHit.material;
 			result.success = 1;
 			break;
 		}
@@ -251,14 +262,25 @@ Result RayMarch(Ray ray)
 void main()
 {
 	Ray ray = GenerateRay();
-	Result result = RayMarch(ray);
 
-	if(result.success == 1)
-	{
-		out_color = vec4(result.color * CalculateLight(result.origin), 1);
+	for(int i = 0; i < 5; i++)
+	{	
+		Result result = RayMarch(ray);
+
+		if(result.success == 1)
+		{		
+			out_color += vec4(result.color * CalculateLight(result.origin) / pow(2, i), 1);		
+			if(result.material == 0) break;
+
+			vec3 normal = GenerateNormal(ray.origin);
+			ray.origin = result.origin + normal * 0.025;
+			ray.direction = reflect(ray.direction, normal);		
+
+		}
+		else
+		{
+			out_color += vec4(0);
+		}
 	}
-	else
-	{
-		out_color = vec4(1);
-	}
+
 }

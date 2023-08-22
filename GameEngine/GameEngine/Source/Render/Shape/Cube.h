@@ -4,7 +4,7 @@
 class Cube : public Shape
 {
 public:
-	Cube(glm::vec3 color, glm::vec3 origin, glm::vec3 parameters) : Shape(color), origin(origin), parameters(parameters) {}
+	Cube(glm::vec3 color, glm::vec3 origin, glm::vec3 parameters, Material material) : Shape(color, material), origin(origin), parameters(parameters) {}
 	~Cube() {}
 	
 	void AttachToShader(Program* program) override;

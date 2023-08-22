@@ -4,7 +4,7 @@
 class Torus : public Shape
 {
 public:
-	Torus(glm::vec3 color, glm::vec3 origin, float radiusPrimary, float radiusSecondary) : Shape(color), origin(origin), radiusPrimary(radiusPrimary), radiusSecondary(radiusSecondary) {}
+	Torus(glm::vec3 color, glm::vec3 origin, float radiusPrimary, float radiusSecondary, Material material) : Shape(color, material), origin(origin), radiusPrimary(radiusPrimary), radiusSecondary(radiusSecondary) {}
 	
 	void AttachToShader(Program* program) override;
 	static int Index;

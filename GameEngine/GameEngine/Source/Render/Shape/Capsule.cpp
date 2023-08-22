@@ -9,6 +9,7 @@ void Capsule::AttachToShader(Program* program)
 	program->SetUniform("uCapsules[" + std::to_string(Index) + "].origin1", origin1);
 	program->SetUniform("uCapsules[" + std::to_string(Index) + "].origin2", origin2);
 	program->SetUniform("uCapsules[" + std::to_string(Index) + "].radius", radius);
+	program->SetUniform("uCapsules[" + std::to_string(Index) + "].material", (int)material);
 	program->SetUniform("uCapsuleNumber", ++Index);
 	program->UnBind();
 }
@@ -19,5 +20,6 @@ Capsule* Capsule::RandomCapsule()
 	glm::vec3 color = glm::vec3(Shape::RandomFloat(), Shape::RandomFloat(), Shape::RandomFloat());
 	glm::vec3 origin1 = glm::vec3(Shape::RandomFloat(), Shape::RandomFloat() * 10 + 1 + radius, Shape::RandomFloat());
 	glm::vec3 origin2 = glm::vec3(Shape::RandomFloat(), radius, Shape::RandomFloat());
-	return new Capsule(color, origin1, origin2, radius);
+	Material material = Shape::RandomFloat() > 0.9f ? REFLECTIVE : DIFFUSE;
+	return new Capsule(color, origin1, origin2, radius, material);
 }

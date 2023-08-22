@@ -9,6 +9,7 @@ void Torus::AttachToShader(Program* program)
 	program->SetUniform("uToruses[" + std::to_string(Index) + "].origin", origin);
 	program->SetUniform("uToruses[" + std::to_string(Index) + "].radiusPrimary", radiusPrimary);
 	program->SetUniform("uToruses[" + std::to_string(Index) + "].radiusSecondary", radiusSecondary);
+	program->SetUniform("uToruses[" + std::to_string(Index) + "].material", (int)material);
 	program->SetUniform("uTorusNumber", ++Index);
 	program->UnBind();
 }
@@ -19,6 +20,6 @@ Torus* Torus::RandomTorus()
 	float radiusPrimary = 0.5 + RandomFloat() / 2;
 	float radiusSecondary = 0.2 + RandomFloat() / 5;
 	glm::vec3 origin = glm::vec3(15 * Shape::RandomFloat(), radiusSecondary, 15 * Shape::RandomFloat());
-
-	return new Torus(color, origin, radiusPrimary, radiusSecondary);
+	Material material = Shape::RandomFloat() > 0.9f ? REFLECTIVE : DIFFUSE;
+	return new Torus(color, origin, radiusPrimary, radiusSecondary, material);
 }

@@ -6,7 +6,7 @@ class Sphere : public Shape
 {
 public:
 	Sphere() : Shape() {};
-	Sphere(glm::vec3 color, glm::vec3 origin, float radius) : Shape(color), origin(origin), radius(radius) {}
+	Sphere(glm::vec3 color, glm::vec3 origin, float radius, Material material) : Shape(color, material), origin(origin), radius(radius) {}
 	void AttachToShader(Program* program) override;
 
 	static Sphere* RandomSphere();
